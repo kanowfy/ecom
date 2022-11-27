@@ -1,0 +1,161 @@
+syntax="proto3";
+
+package pb;
+option go_package = ".;pb";
+
+message None {}
+
+// ---------- Catalog Service ---------- //
+service Catalog {
+  rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse){};
+  rpc AddProduct(AddProductRequest) returns (AddProductResponse){};
+  rpc ListProducts(None) returns (ListProductsResponse) {};
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse) {};
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string category = 4;
+  int64 price_usd = 5;
+  string image = 6;
+}
+
+message GetProductByIdRequest {
+  string id = 1;
+}
+
+message GetProductByIdResponse {
+  Product product = 1;
+}
+
+message AddProductRequest {
+  Product product = 1;
+}
+
+message AddProductResponse {
+  string id = 1;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+}
+
+message SearchProductsRequest {
+  string query = 1;
+}
+
+message SearchProductsResponse {
+  repeated Product results = 1;
+}
+
+// ---------- Cart Service ---------- //
+service Cart {
+  rpc AddItem(AddItemRequest) returns (None) {};
+  rpc GetCart(GetCartRequest) returns (GetCartResponse) {};
+}
+
+message CartItem {
+  string product_id = 1;
+  uint32 quantity = 2;
+}
+
+message AddItemRequest {
+  string user_id = 1;
+  CartItem item = 2;
+}
+
+message GetCartRequest {
+  string user_id = 1;
+}
+
+message GetCartResponse {
+  string user_id = 1;
+  repeated CartItem items = 2;
+}
+// ---------- Payment Service ---------- //
+service Payment {
+  rpc Charge(ChargeRequest) returns (ChargeResponse) {};
+}
+
+message CardInfo {
+  string card_number = 1;
+  uint32 card_cvv = 2;
+  uint32 card_expiration_year = 3;
+  uint32 card_expiration_month = 4;
+}
+
+message ChargeRequest {
+  int64 amount = 1;
+  CardInfo credit_card = 2;
+}
+
+message ChargeResponse {
+  string payment_id = 1;
+}
+
+// ---------- Shipping Service ---------- //
+
+service Shipping {
+  rpc GetShippingCost(GetShippingCostRequest) returns (GetShippingCostResponse);
+  rpc ShipOrder(ShipOrderRequest) returns (ShipOrderResponse) {};
+}
+
+message GetShippingCostRequest {
+  Address address = 1;
+  repeated CartItem items = 2;
+}
+
+message GetShippingCostResponse {
+  int64 cost = 1;
+}
+
+message ShipOrderRequest {
+  Address address = 1;
+  repeated CartItem items = 2;
+}
+
+message ShipOrderResponse {
+  string tracking_id = 1;
+}
+
+
+// ---------- Order Service ---------- //
+service Order {
+  rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse) {};
+}
+
+message OrderItem {
+  CartItem item = 1;
+  int64 cost = 2;
+}
+
+message OrderResult {
+  string order_id = 1;
+  string shipping_tracking_id = 2;
+  int64 shipping_cost = 3;
+  Address shipping_address = 4;
+  repeated OrderItem items = 5;
+}
+
+message Address {
+  string street_address = 1;
+  string city = 2;
+  string country = 3;
+  int32 zip_code = 4;
+}
+
+message PlaceOrderRequest {
+  string user_id = 1;
+  Address address = 2;
+  string email = 3;
+  CardInfo card = 4;
+}
+
+message PlaceOrderResponse {
+  OrderResult order = 1;
+}
+
+
+
