@@ -1,9 +1,9 @@
 FROM golang:1.19-alpine3.16 as builder
 WORKDIR /app
 COPY . .
-RUN go build -o server main.go
+RUN go build -o server .
 
-FROM alpine3.16
+FROM alpine:3.16
 WORKDIR /app
 COPY --from=builder /app/server .
 
