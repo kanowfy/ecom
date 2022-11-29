@@ -80,7 +80,7 @@ func (m ProductModel) List(query string) ([]*Product, error) {
 	SELECT id, name, description, category, price, image
 	FROM products
 	WHERE (to_tsvector('simple', %s) @@ plainto_tsquery($1) OR $1 = '')
-	ORDER BY ts_rank(%s, plainto_tsquery($1))
+	ORDER BY ts_rank(to_tsvector(%s), plainto_tsquery($1))
 	`, document, document)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
