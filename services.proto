@@ -54,6 +54,7 @@ message SearchProductsResponse {
 service Cart {
   rpc AddItem(AddItemRequest) returns (None) {};
   rpc GetCart(GetCartRequest) returns (GetCartResponse) {};
+  rpc RemoveItem(RemoveItemRequest) returns (None) {};
 }
 
 message CartItem {
@@ -64,6 +65,11 @@ message CartItem {
 message AddItemRequest {
   string user_id = 1;
   CartItem item = 2;
+}
+
+message RemoveItemRequest {
+  string user_id = 1;
+  string product_id = 2;
 }
 
 message GetCartRequest {
