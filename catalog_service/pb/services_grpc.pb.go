@@ -578,6 +578,92 @@ var Shipping_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "services.proto",
 }
 
+// EmailClient is the client API for Email service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type EmailClient interface {
+	SendConfirmation(ctx context.Context, in *SendConfirmationRequest, opts ...grpc.CallOption) (*None, error)
+}
+
+type emailClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewEmailClient(cc grpc.ClientConnInterface) EmailClient {
+	return &emailClient{cc}
+}
+
+func (c *emailClient) SendConfirmation(ctx context.Context, in *SendConfirmationRequest, opts ...grpc.CallOption) (*None, error) {
+	out := new(None)
+	err := c.cc.Invoke(ctx, "/pb.Email/SendConfirmation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// EmailServer is the server API for Email service.
+// All implementations must embed UnimplementedEmailServer
+// for forward compatibility
+type EmailServer interface {
+	SendConfirmation(context.Context, *SendConfirmationRequest) (*None, error)
+	mustEmbedUnimplementedEmailServer()
+}
+
+// UnimplementedEmailServer must be embedded to have forward compatible implementations.
+type UnimplementedEmailServer struct {
+}
+
+func (UnimplementedEmailServer) SendConfirmation(context.Context, *SendConfirmationRequest) (*None, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendConfirmation not implemented")
+}
+func (UnimplementedEmailServer) mustEmbedUnimplementedEmailServer() {}
+
+// UnsafeEmailServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to EmailServer will
+// result in compilation errors.
+type UnsafeEmailServer interface {
+	mustEmbedUnimplementedEmailServer()
+}
+
+func RegisterEmailServer(s grpc.ServiceRegistrar, srv EmailServer) {
+	s.RegisterService(&Email_ServiceDesc, srv)
+}
+
+func _Email_SendConfirmation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendConfirmationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmailServer).SendConfirmation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Email/SendConfirmation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmailServer).SendConfirmation(ctx, req.(*SendConfirmationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Email_ServiceDesc is the grpc.ServiceDesc for Email service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Email_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.Email",
+	HandlerType: (*EmailServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SendConfirmation",
+			Handler:    _Email_SendConfirmation_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "services.proto",
+}
+
 // OrderClient is the client API for Order service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.

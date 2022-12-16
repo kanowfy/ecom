@@ -126,6 +126,15 @@ message ShipOrderResponse {
   string tracking_id = 1;
 }
 
+// ---------- Email Service ---------- //
+service Email {
+  rpc SendConfirmation(SendConfirmationRequest) returns (None) {}
+}
+
+message SendConfirmationRequest {
+  string email = 1;
+  OrderResult order = 2;
+}
 
 // ---------- Order Service ---------- //
 service Order {
