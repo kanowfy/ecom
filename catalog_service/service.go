@@ -35,7 +35,7 @@ func (s *server) GetProductById(ctx context.Context, req *pb.GetProductByIdReque
 			Name:        product.Name,
 			Description: product.Description,
 			Category:    product.Category,
-			PriceUsd:    product.Price,
+			PriceVnd:    product.Price,
 			Image:       product.Image,
 		},
 	}
@@ -57,7 +57,7 @@ func (s *server) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*pb
 		Name:        req.Product.Name,
 		Description: req.Product.Description,
 		Category:    req.Product.Category,
-		Price:       req.Product.PriceUsd,
+		Price:       req.Product.PriceVnd,
 		Image:       req.Product.Image,
 	}
 
@@ -90,7 +90,7 @@ func (s *server) ListProducts(ctx context.Context, req *pb.None) (*pb.ListProduc
 			Name:        p.Name,
 			Description: p.Description,
 			Category:    p.Category,
-			PriceUsd:    p.Price,
+			PriceVnd:    p.Price,
 			Image:       p.Image,
 		}
 		productsResponse = append(productsResponse, product)
@@ -115,7 +115,7 @@ func (s *server) SearchProducts(ctx context.Context, req *pb.SearchProductsReque
 			Name:        p.Name,
 			Description: p.Description,
 			Category:    p.Category,
-			PriceUsd:    p.Price,
+			PriceVnd:    p.Price,
 			Image:       p.Image,
 		}
 		productsResponse = append(productsResponse, product)

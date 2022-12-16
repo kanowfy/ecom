@@ -34,7 +34,7 @@ func main() {
 		Name:        "Nike Air Jordan 1 Low",
 		Description: "Inspired by the original that debuted in 1985, the Air Jordan 1 Low offers a clean, classic look that's familiar yet always fresh.",
 		Category:    "Shoes",
-		PriceUsd:    100,
+		PriceVnd:    1500000,
 		Image:       "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/1e463dee-799d-4fba-9b32-0f7e0bb9d5f5/air-jordan-1-low-shoes-6Q1tFM.png",
 	}
 

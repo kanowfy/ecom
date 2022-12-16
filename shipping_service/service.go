@@ -12,7 +12,7 @@ func (s *server) GetShippingCost(ctx context.Context, req *pb.GetShippingCostReq
 	log.Printf("received a GetShippingCost request with data: %+v", req)
 	defer log.Println("GetShippingCost successful")
 	return &pb.GetShippingCostResponse{
-		Cost: 5,
+		Cost: 50000,
 	}, status.New(codes.OK, "").Err()
 }
 

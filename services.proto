@@ -18,7 +18,7 @@ message Product {
   string name = 2;
   string description = 3;
   string category = 4;
-  int64 price_usd = 5;
+  int64 price_vnd = 5;
   string image = 6;
 }
 
