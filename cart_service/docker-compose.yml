@@ -2,11 +2,9 @@ version: "3.9"
 services:
   redis:
     image: redis:alpine
-    command: redis-server /usr/local/etc/redis/redis.conf --requirepass psswrd
     ports:
       - "6379:6379"
-    volumes:
-      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+    entrypoint: redis-server --appendonly yes
   srv:
     build:
       context: .
@@ -14,6 +12,6 @@ services:
     ports:
       - "3002:3002"
     environment:
-      - RD_URL=redis://:psswrd@redis:6379
+      - RD_URL=redis:6379
     depends_on:
       - redis

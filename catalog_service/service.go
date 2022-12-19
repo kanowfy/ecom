@@ -83,7 +83,7 @@ func (s *server) ListProducts(ctx context.Context, req *pb.None) (*pb.ListProduc
 		return nil, status.Errorf(codes.Internal, "unable to retrieve products: %v", err)
 	}
 
-	productsResponse := []*pb.Product{}
+	var productsResponse []*pb.Product
 	for _, p := range products {
 		product := &pb.Product{
 			Id:          p.ID,
@@ -108,7 +108,7 @@ func (s *server) SearchProducts(ctx context.Context, req *pb.SearchProductsReque
 		return nil, status.Errorf(codes.Internal, "unable to retrieve products: %v", err)
 	}
 
-	productsResponse := []*pb.Product{}
+	var productsResponse []*pb.Product
 	for _, p := range products {
 		product := &pb.Product{
 			Id:          p.ID,

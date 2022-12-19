@@ -19,11 +19,11 @@ type server struct {
 }
 
 func main() {
-	opt, err := redis.ParseURL(os.Getenv("RD_URL"))
-	if err != nil {
-		panic(err)
-	}
-	rdb := redis.NewClient(opt)
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("RD_URL"),
+		Password: "",
+		DB:       0,
+	})
 
 	srv := &server{
 		model: NewModel(rdb),

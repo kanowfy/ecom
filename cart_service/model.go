@@ -75,7 +75,9 @@ func (m CartModel) AddItem(userid string, item *CartItem) error {
 	defer cancel()
 	_, err := m.GetCart(userid)
 	if err != nil {
-		return err
+		if !errors.Is(err, ErrNoRecord) {
+			return err
+		}
 	}
 
 	ok, err := m.DB.HSetNX(ctx, userid, item.ProductId, item.Quantity).Result()
