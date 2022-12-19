@@ -48,8 +48,8 @@ func (s *server) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*pb
 	log.Println("received an AddProduct request")
 	id, err := uuid.NewV4()
 	if err != nil {
-		log.Printf("can not generate id: %v", err)
-		return nil, status.Errorf(codes.Internal, "unable to generate id: %v", err)
+		log.Printf("can not generate uuid: %v", err)
+		return nil, status.Errorf(codes.Internal, "unable to generate uuid: %v", err)
 	}
 
 	product := &Product{
