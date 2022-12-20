@@ -4,6 +4,7 @@ import (
 	"errors"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -16,7 +17,9 @@ var (
 )
 
 func VerifyCard(number string, cvv uint32, expiration_year uint32, expiration_month uint32) error {
-	if len(number) != 16 {
+	number = strings.ReplaceAll(number, " ", "")
+	number = strings.ReplaceAll(number, "-", "")
+	if len(number) < 13 || len(number) > 16 {
 		return ErrInvalidCreditCard
 	}
 

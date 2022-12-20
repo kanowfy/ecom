@@ -14,7 +14,6 @@ func (s *server) Charge(ctx context.Context, req *pb.ChargeRequest) (*pb.ChargeR
 	log.Printf("received a Charge request with data: %v", req)
 	err := VerifyCard(req.GetCreditCard().CardNumber, req.GetCreditCard().CardCvv, req.GetCreditCard().CardExpirationYear, req.GetCreditCard().CardExpirationMonth)
 	if err != nil {
-		log.Printf("card verification failed: %v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "card verification failed: %v", err)
 	}
 
