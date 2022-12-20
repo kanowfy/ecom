@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	port = ":3003"
+	port = ":3006"
 )
 
 type connection struct {

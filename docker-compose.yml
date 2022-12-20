@@ -39,16 +39,36 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3003:3003"
+    depends_on:
+      - cart_svc
   shipping_svc:
     build:
       context: ./shipping_service
       dockerfile: Dockerfile
     ports:
       - "3004:3004"
+    depends_on:
+      - payment_svc
   email_svc:
     build:
       context: ./email_service
       dockerfile: Dockerfile
     ports:
       - "3005:3005"
+    depends_on:
+      - shipping_svc
+  order_svc:
+    build:
+      context: ./order_service
+      dockerfile: Dockerfile
+    environment:
+      - CATALOG_SVC_ADDR=catalog_svc:3001
+      - CART_SVC_ADDR=cart_svc:3002
+      - PAYMENT_SVC_ADDR=payment_svc:3003
+      - SHIPPING_SVC_ADDR=shipping_svc:3004
+      - EMAIL_SVC_ADDR=email_svc:3005
+    ports:
+      - "3006:3006"
+    depends_on:
+      - email_svc
 
