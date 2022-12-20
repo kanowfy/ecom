@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=psswrd
+      - POSTGRES_DB=catalog
+  catalog_svc:
+    build:
+      context: ./catalog_service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_URL=postgres://root:psswrd@postgres:5432/catalog?sslmode=disable
+    depends_on:
+      - postgres
+    entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
+    command: [ "/app/server" ]
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    entrypoint: redis-server --appendonly yes
+  cart_svc:
+    build:
+      context: ./cart_service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - RD_URL=redis:6379
+    depends_on:
+      - redis
+  payment_svc:
+    build:
+      context: ./payment_service
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+  shipping_svc:
+    build:
+      context: ./shipping_service
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+  email_svc:
+    build:
+      context: ./email_service
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+

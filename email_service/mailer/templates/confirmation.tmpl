@@ -11,9 +11,9 @@ Shipping
 {{.shipping_address.street_address}}, {{.shipping_address.city}}, {{.shipping_address.country}} {{.shipping_address.zip_code}}
 Items
 {{range .items}}
-Item No. : #{{.item.product_id}}
-Quantity : {{.item.quantity}}
-Price    : {{.cost}} VND
+Item No. : #{{.Item.Product_id}}
+Quantity : {{.Item.Quantity}}
+Price    : {{.Cost}} VND
 {{end}}
 {{end}}
 {{define "htmlBody"}}
@@ -23,7 +23,13 @@ Price    : {{.cost}} VND
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Order Confirmation</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
+<style>
+    body {
+            font-family: 'DM Sans', sans-serif;
+    }
+</style>
 <body>
 <h2>Order Confirmation</h2>
 <p>Thanks for shopping with us!</p>
@@ -42,9 +48,9 @@ Price    : {{.cost}} VND
     </tr>
     {{range .items}}
     <tr>
-        <td>#{{.item.product_id}}</td>
-        <td>{{.item.quantity}}</td>
-        <td>{{.cost}} VND</td>
+        <td>#{{.Item.Product_id}}</td>
+        <td>{{.Item.Quantity}}</td>
+        <td>{{.Cost}} VND</td>
     </tr>
     {{end}}
 </table>

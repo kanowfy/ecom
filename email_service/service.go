@@ -2,44 +2,45 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"github.com/kanowfy/ecom/email_service/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 type orderItem struct {
-	item struct {
-		product_id string
-		quantity uint32
+	Item struct {
+		Product_id string
+		Quantity   uint32
 	}
-	price int64
+	Cost int64
 }
 
 func (s *server) SendConfirmation(ctx context.Context, req *pb.SendConfirmationRequest) (*pb.None, error) {
 	log.Printf("received a SendConfirmation request with data: %+v", req)
-	defer log.Println("SendConfirmation successful")
 
 	var items []*orderItem
 	for _, it := range req.GetOrder().GetItems() {
 		var ordItem orderItem
-		ordItem.item = struct {
-			product_id string
-			quantity   uint32
-		}{product_id: it.GetItem().ProductId, quantity: it.GetItem().Quantity}
-		ordItem.price = it.GetCost()
+		ordItem.Item = struct {
+			Product_id string
+			Quantity   uint32
+		}{Product_id: it.GetItem().ProductId, Quantity: it.GetItem().Quantity}
+		ordItem.Cost = it.GetCost()
 		items = append(items, &ordItem)
 	}
 	data := map[string]interface{}{
-		"order_id": req.GetOrder().OrderId,
+		"order_id":             req.GetOrder().OrderId,
 		"shipping_tracking_id": req.GetOrder().ShippingTrackingId,
+		"shipping_cost":        req.GetOrder().ShippingCost,
 		"shipping_address": map[string]interface{}{
 			"street_address": req.GetOrder().ShippingAddress.StreetAddress,
-			"city": req.GetOrder().ShippingAddress.City,
-			"country": req.GetOrder().ShippingAddress.Country,
-			"zip_code": req.GetOrder().ShippingAddress.ZipCode,
-			},
-			"items": items,
+			"city":           req.GetOrder().ShippingAddress.City,
+			"country":        req.GetOrder().ShippingAddress.Country,
+			"zip_code":       req.GetOrder().ShippingAddress.ZipCode,
+		},
+		"items": items,
 	}
 
 	err := s.mailer.Send(req.GetEmail(), "confirmation.tmpl", data)
@@ -48,5 +49,6 @@ func (s *server) SendConfirmation(ctx context.Context, req *pb.SendConfirmationR
 		return nil, status.Errorf(codes.Internal, "send email error: %v", err)
 	}
 
+	log.Println("SendConfirmation successful")
 	return &pb.None{}, status.New(codes.OK, "").Err()
 }
