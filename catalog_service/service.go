@@ -75,32 +75,6 @@ func (s *server) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*pb
 
 	return resp, status.New(codes.OK, "").Err()
 }
-
-func (s *server) ListProducts(ctx context.Context, req *pb.None) (*pb.ListProductsResponse, error) {
-	log.Println("received a ListProducts request")
-	products, err := s.model.List("")
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to retrieve products: %v", err)
-	}
-
-	var productsResponse []*pb.Product
-	for _, p := range products {
-		product := &pb.Product{
-			Id:          p.ID,
-			Name:        p.Name,
-			Description: p.Description,
-			Category:    p.Category,
-			PriceVnd:    p.Price,
-			Image:       p.Image,
-		}
-		productsResponse = append(productsResponse, product)
-	}
-
-	log.Println("ListProducts successful")
-	resp := &pb.ListProductsResponse{Products: productsResponse}
-	return resp, status.New(codes.OK, "").Err()
-}
-
 func (s *server) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
 	log.Println("received a SearchProducts request")
 	products, err := s.model.List(req.GetQuery())

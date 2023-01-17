@@ -9,7 +9,6 @@ message None {}
 service Catalog {
   rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse){};
   rpc AddProduct(AddProductRequest) returns (AddProductResponse){};
-  rpc ListProducts(None) returns (ListProductsResponse) {};
   rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse) {};
 }
 
@@ -36,10 +35,6 @@ message AddProductRequest {
 
 message AddProductResponse {
   string id = 1;
-}
-
-message ListProductsResponse {
-  repeated Product products = 1;
 }
 
 message SearchProductsRequest {

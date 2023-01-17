@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type CatalogClient interface {
 	GetProductById(ctx context.Context, in *GetProductByIdRequest, opts ...grpc.CallOption) (*GetProductByIdResponse, error)
 	AddProduct(ctx context.Context, in *AddProductRequest, opts ...grpc.CallOption) (*AddProductResponse, error)
-	ListProducts(ctx context.Context, in *None, opts ...grpc.CallOption) (*ListProductsResponse, error)
 	SearchProducts(ctx context.Context, in *SearchProductsRequest, opts ...grpc.CallOption) (*SearchProductsResponse, error)
 }
 
@@ -54,15 +53,6 @@ func (c *catalogClient) AddProduct(ctx context.Context, in *AddProductRequest, o
 	return out, nil
 }
 
-func (c *catalogClient) ListProducts(ctx context.Context, in *None, opts ...grpc.CallOption) (*ListProductsResponse, error) {
-	out := new(ListProductsResponse)
-	err := c.cc.Invoke(ctx, "/pb.Catalog/ListProducts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *catalogClient) SearchProducts(ctx context.Context, in *SearchProductsRequest, opts ...grpc.CallOption) (*SearchProductsResponse, error) {
 	out := new(SearchProductsResponse)
 	err := c.cc.Invoke(ctx, "/pb.Catalog/SearchProducts", in, out, opts...)
@@ -78,7 +68,6 @@ func (c *catalogClient) SearchProducts(ctx context.Context, in *SearchProductsRe
 type CatalogServer interface {
 	GetProductById(context.Context, *GetProductByIdRequest) (*GetProductByIdResponse, error)
 	AddProduct(context.Context, *AddProductRequest) (*AddProductResponse, error)
-	ListProducts(context.Context, *None) (*ListProductsResponse, error)
 	SearchProducts(context.Context, *SearchProductsRequest) (*SearchProductsResponse, error)
 	mustEmbedUnimplementedCatalogServer()
 }
@@ -92,9 +81,6 @@ func (UnimplementedCatalogServer) GetProductById(context.Context, *GetProductByI
 }
 func (UnimplementedCatalogServer) AddProduct(context.Context, *AddProductRequest) (*AddProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddProduct not implemented")
-}
-func (UnimplementedCatalogServer) ListProducts(context.Context, *None) (*ListProductsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListProducts not implemented")
 }
 func (UnimplementedCatalogServer) SearchProducts(context.Context, *SearchProductsRequest) (*SearchProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchProducts not implemented")
@@ -148,24 +134,6 @@ func _Catalog_AddProduct_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Catalog_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(None)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CatalogServer).ListProducts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.Catalog/ListProducts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CatalogServer).ListProducts(ctx, req.(*None))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Catalog_SearchProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchProductsRequest)
 	if err := dec(in); err != nil {
@@ -198,10 +166,6 @@ var Catalog_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddProduct",
 			Handler:    _Catalog_AddProduct_Handler,
-		},
-		{
-			MethodName: "ListProducts",
-			Handler:    _Catalog_ListProducts_Handler,
 		},
 		{
 			MethodName: "SearchProducts",

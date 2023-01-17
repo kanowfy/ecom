@@ -1,0 +1,29 @@
+{{template "base" .}}
+
+{{define "body"}}
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col">
+            <img src="{{.Image}}" alt="{{.Name}}" height=500px>
+        </div>
+        <div class="col">
+            <h1>{{.Name}}</h1>
+            <h3><span>&#8363;</span>{{.PriceVnd}}</h3>
+            <p>{{.Description}}</p>
+            <select class="form-select mb-3" style="width: 85px;">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <button type="button" class="btn btn-danger">Add To Cart</button>
+        </div>
+    </div>
+</div>
+{{end}}

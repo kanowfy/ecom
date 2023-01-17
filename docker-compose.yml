@@ -71,4 +71,19 @@ services:
       - "3006:3006"
     depends_on:
       - email_svc
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - CATALOG_SVC_ADDR=catalog_svc:3001
+      - CART_SVC_ADDR=cart_svc:3002
+      - PAYMENT_SVC_ADDR=payment_svc:3003
+      - SHIPPING_SVC_ADDR=shipping_svc:3004
+      - EMAIL_SVC_ADDR=email_svc:3005
+      - ORDER_SVC_ADDR=order_svc:3006
+    ports:
+      - "4000:4000"
+    depends_on:
+      - order_svc
 

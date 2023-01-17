@@ -1,0 +1,131 @@
+{{template "base" .}}
+
+{{define "body"}}
+<div class="row m-5">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="content-body p-5">
+                <h4 class="card-title mb-4">Your cart</h4>
+                <article class="row gy-3 mb-4">
+                    <div class="col-lg-5">
+                        <figure class="itemside me-lg-5">
+                            <div class="aside"><img src="images/items/11.webp" class="img-sm img-thumbnail"></div>
+                            <figcaption class="info">
+                                <a href="#" class="title">Winter jacket for men and lady</a>
+                                <p class="text-muted"> Yellow, Jeans </p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-auto">
+                        <select style="width: 100px" class="form-select">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-sm-4 col-6">
+                        <div class="price-wrap lh-sm">
+                            <var class="price h6">$1156.00</var> <br>
+                            <small class="text-muted"> $460.00 / per item </small>
+                        </div> <!-- price-wrap .// -->
+                    </div>
+                    <div class="col-lg col-sm-4">
+                        <div class="float-lg-end">
+                            <a href="#" class="btn btn-light text-danger"> Remove</a>
+                        </div>
+                    </div>
+                </article> <!-- row.// -->
+
+                <article class="row gy-3 mb-4">
+                    <div class="col-lg-5">
+                        <figure class="itemside me-lg-5">
+                            <div class="aside"><img src="images/items/12.webp" class="img-sm img-thumbnail"></div>
+                            <figcaption class="info">
+                                <a href="#" class="title">Mens T-shirt Cotton Base</a>
+                                <p class="text-muted"> Blue, Medium </p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-auto">
+                        <select style="width: 100px" class="form-select">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option selected>4</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-sm-4 col-6">
+                        <div class="price-wrap lh-sm">
+                            <var class="price h6">$44.80</var> <br>
+                            <small class="text-muted"> $12.20 / per item </small>
+                        </div> <!-- price-wrap .// -->
+                    </div>
+                    <div class="col-lg col-sm-4">
+                        <div class="float-lg-end">
+                            <a href="#" class="btn btn-light text-danger"> Remove</a>
+                        </div>
+                    </div>
+                </article> <!-- row.// -->
+
+                <article class="row gy-3 mb-4">
+                    <div class="col-lg-5">
+                        <figure class="itemside me-lg-5">
+                            <div class="aside"><img src="images/items/13.webp" class="img-sm img-thumbnail"></div>
+                            <figcaption class="info">
+                                <a href="#" class="title">Blazer Suit Dress Jacket for Men</a>
+                                <p class="text-muted"> XL size, Jeans, Blue </p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-auto">
+                        <select style="width: 100px" class="form-select">
+                            <option>1</option>
+                            <option>2</option>
+                            <option selected>3</option>
+                            <option>4</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-sm-4 col-6">
+                        <div class="price-wrap lh-sm">
+                            <var class="price h6">$1156.00</var> <br>
+                            <small class="text-muted"> $460.00 / per item </small>
+                        </div> <!-- price-wrap .// -->
+                    </div>
+                    <div class="col-lg col-sm-4">
+                        <div class="float-lg-end">
+                            <a href="#" class="btn btn-light text-danger"> Remove</a>
+                        </div>
+                    </div>
+                </article> <!-- row.// -->
+
+            </div> <!-- card-body .// -->
+        </div> <!-- card.// -->
+
+    </div> <!-- col.// -->
+    <aside class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <dl class="dlist-align">
+                    <dt>Total price:</dt>
+                    <dd class="text-end"> $329.00</dd>
+                </dl>
+                <dl class="dlist-align">
+                    <dt>Shipping:</dt>
+                    <dd class="text-end"> $14.00 </dd>
+                </dl>
+                <hr>
+                <dl class="dlist-align">
+                    <dt>Total:</dt>
+                    <dd class="text-end text-dark h5"> $357.90 </dd>
+                </dl>
+
+                <div class="d-grid gap-2 my-3">
+                    <a href="/checkout" class="btn btn-success w-100"> Go to Checkout </a>
+                    <a href="/products" class="btn btn-light w-100"> Continue Shopping </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+{{end}}
