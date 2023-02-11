@@ -46,7 +46,7 @@
 
 ## Contact
 
-Your Name - [@kanowfy](https://twitter.com/kanowfy) - nguyendung2002hl@gmail.com
+[@kanowfy](https://twitter.com/kanowfy) - nguyendung2002hl@gmail.com
 
 <!-- ACKNOWLEDGMENTS -->
 
