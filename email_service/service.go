@@ -43,12 +43,12 @@ func (s *server) SendConfirmation(ctx context.Context, req *pb.SendConfirmationR
 		"items": items,
 	}
 
-	err := s.mailer.Send(req.GetEmail(), "confirmation.tmpl", data)
-	if err != nil {
-		log.Printf("send email error: %v", err)
-		return nil, status.Errorf(codes.Internal, "send email error: %v", err)
-	}
+	go func() {
+		err := s.mailer.Send(req.GetEmail(), "confirmation.tmpl", data)
+		if err != nil {
+			log.Printf("send email error: %v", err)
+		}
+	}()
 
-	log.Println("SendConfirmation successful")
-	return &pb.None{}, status.New(codes.OK, "").Err()
+	return &pb.None{}, status.New(codes.OK, "confirmation email delivering").Err()
 }

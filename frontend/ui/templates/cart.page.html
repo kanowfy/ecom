@@ -1,0 +1,72 @@
+{{template "base" .}}
+
+{{define "body"}}
+<div class="row ms-5" style="max-width: 92%; height: 75vh;">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="content-body p-5">
+                <h4 class="card-title mb-4">Your cart</h4>
+                {{ range .items }}
+                <article class="row gy-3 mb-4">
+                    <div class="col-lg-5">
+                        <figure class="itemside me-lg-5">
+                            <div class="aside"><img src="{{.Item.Image}}" class="img-thumbnail"
+                                    style="height: 70px; width: 70px;"></div>
+                            <figcaption class="info">
+                                <a href="/products/{{.Item.Id}}"
+                                    class="link-warning text-decoration-none">{{.Item.Name}}</a>
+                                <p class="text-muted"> {{.Item.Category}} </p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-auto">
+                        <span>Quantity: {{.Quantity}}</span>
+                    </div>
+                    <div class="col-lg-2 col-sm-4 col-6">
+                        <div class="price-wrap lh-sm">
+                            <var class="price h6"><span>&#8363;</span>{{formattedPrice .ItemTotal}}</var> <br>
+                            <small class="text-muted"><span>&#8363;</span>{{formattedPrice .Item.PriceVnd}} / per item
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-lg col-sm-4">
+                        <div class="float-lg-end">
+                            <form action="/cart/remove" method="POST">
+                                <input type="hidden" name="productid" value="{{.Item.Id}}">
+                                <input type="submit" class="btn btn-danger" value="Remove">
+                            </form>
+                        </div>
+                    </div>
+                </article>
+                {{end}}
+
+            </div>
+        </div>
+
+    </div>
+    <aside class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <dl class="dlist-align">
+                    <dt>Total price:</dt>
+                    <dd class="text-end"> <span>&#8363;</span>{{formattedPrice .total_price_without_shipping}}</dd>
+                </dl>
+                <dl class="dlist-align">
+                    <dt>Shipping:</dt>
+                    <dd class="text-end"> <span>&#8363;</span>{{formattedPrice .shipping_cost}} </dd>
+                </dl>
+                <hr>
+                <dl class="dlist-align">
+                    <dt>Total:</dt>
+                    <dd class="text-end text-dark h5"> <span>&#8363;</span>{{formattedPrice .total_price}} </dd>
+                </dl>
+
+                <div class="d-grid gap-2 my-3">
+                    <a href="/checkout" class="btn btn-primary w-100"> Go to Checkout </a>
+                    <a href="/products" class="btn btn-light w-100"> Continue Shopping </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+{{end}}

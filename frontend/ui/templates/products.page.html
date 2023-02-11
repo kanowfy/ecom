@@ -1,0 +1,18 @@
+{{template "base" .}}
+
+{{define "body"}}
+<h2 class="text-center">Hot Products</h2>
+<ul class="row mx-5 mt-4 h-100 d-flex align-items-center justify-content-center">
+    {{range .}}
+    <div class="card col-md-3 m-3" style="width: 20rem;">
+        <a href="/products/{{.Id}}">
+            <img src="{{.Image}}" class="card-img-top" height=300px alt="{{.Name}}">
+        </a>
+        <div class="card-body">
+            <h5 class="text-base text-muted font-semibold">{{.Name}}</h5>
+            <span class="d-block h5"><span>&#8363;</span>{{formattedPrice .PriceVnd}}</span>
+        </div>
+    </div>
+    {{end}}
+</ul>
+{{end}}
