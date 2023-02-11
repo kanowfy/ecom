@@ -10,8 +10,12 @@ import (
 )
 
 var (
-	port = ":4000"
+	port         = ":4000"
+	cookieSID    = "ecom_sid"
+	cookieMaxAge = 60 * 60 * 24
 )
+
+type ctxSIDKey struct{}
 
 type application struct {
 	templateCache map[string]*template.Template
@@ -47,15 +51,20 @@ func main() {
 	app.templateCache = templateCache
 
 	r := httprouter.New()
-	r.GET("/", app.home)
-	r.GET("/products", app.products)
-	r.GET("/products/:id", app.product)
-	r.GET("/cart", app.cart)
-	r.GET("/checkout", app.checkout)
-	r.GET("/result", app.result)
-	r.GET("/about", app.result)
+	r.GET("/", app.homeHandler)
+	r.GET("/products", app.productsHandler)
+	r.GET("/products/:id", app.productHandler)
+	r.GET("/cart", app.viewCartHandler)
+	r.POST("/cart", app.addToCartHandler)
+	r.POST("/cart/remove", app.removeFromCartHandler)
+	r.GET("/checkout", app.checkoutHandler)
+	r.POST("/checkout", app.placeOrderHandler)
+	r.GET("/about", app.aboutHandler)
 	r.ServeFiles("/public/*filepath", http.Dir("./ui/static"))
 
+	var handler http.Handler = r
+	handler = checkSessionID(handler)
+
 	log.Printf("Server listening on port %s", port)
-	log.Fatal(http.ListenAndServe(port, r))
+	log.Fatal(http.ListenAndServe(port, handler))
 }

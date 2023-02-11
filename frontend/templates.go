@@ -16,7 +16,9 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.ParseFiles(page)
+		ts, err := template.New(name).Funcs(template.FuncMap{
+			"formattedPrice": formattedPrice,
+		}).ParseFiles(page)
 		if err != nil {
 			return nil, err
 		}

@@ -10,7 +10,7 @@
         </a>
         <div class="card-body">
             <h5 class="text-base text-muted font-semibold">{{.Name}}</h5>
-            <span class="d-block h5"><span>&#8363;</span>{{.PriceVnd}}</span>
+            <span class="d-block h5"><span>&#8363;</span>{{formattedPrice .PriceVnd}}</span>
         </div>
     </div>
     {{end}}
