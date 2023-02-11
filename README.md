@@ -13,6 +13,8 @@
 
 ## About The Project
 
+<img src="https://raw.githubusercontent.com/kanowfy/ecom/dev/img/1.png">
+
 8 Go services communicate through <b>gRPC</b>:
 <br/>
 
