@@ -24,7 +24,7 @@
 - <b>Shipping Service</b>: Get shipping cost and mock shipping order
 - <b>Email Service</b>: Send confirmation email to customer, uses [Mailtrap](https://mailtrap.io) to test inbox
 - <b>Order Service</b>: Aggregate data to produce order result
-- <b>Frontend Service</b>: Display the U
+- <b>Frontend Service</b>: Display the UI
 
 ### Prerequisites
 
