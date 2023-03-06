@@ -15,7 +15,7 @@
 
 <img src="https://raw.githubusercontent.com/kanowfy/ecom/dev/img/1.png">
 
-8 Go services communicate through <b>gRPC</b>:
+7 Go services communicate through <b>gRPC</b>:
 <br/>
 
 - <b>Catalog Service</b>: Handle management of products, uses Postgresql to persist data
