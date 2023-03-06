@@ -54,6 +54,7 @@ func main() {
 	r.GET("/", app.homeHandler)
 	r.GET("/products", app.productsHandler)
 	r.GET("/products/:id", app.productHandler)
+	r.POST("/products", app.searchProductsHandler)
 	r.GET("/cart", app.viewCartHandler)
 	r.POST("/cart", app.addToCartHandler)
 	r.POST("/cart/remove", app.removeFromCartHandler)

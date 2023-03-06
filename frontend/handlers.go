@@ -39,6 +39,18 @@ func (app *application) productsHandler(w http.ResponseWriter, r *http.Request, 
 	app.renderTemplates(w, "products.page.html", res)
 }
 
+func (app *application) searchProductsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	r.ParseForm()
+	query := r.FormValue("query")
+	res, err := app.getProducts(context.Background(), query)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	app.renderTemplates(w, "products.page.html", res)
+}
+
 func (app *application) productHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	product, err := app.getProduct(context.Background(), ps.ByName("id"))
 	if err != nil {
