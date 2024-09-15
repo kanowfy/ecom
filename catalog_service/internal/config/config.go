@@ -1,6 +1,5 @@
 package config
 
-// postgres://root:psswrd@postgres:5432/catalog?sslmode=disable
 type Config struct {
 	Server struct {
 		Host string `env:"SERVER_HOST"`
@@ -8,5 +7,8 @@ type Config struct {
 	}
 	DB struct {
 		Url string `env:"DB_URL"`
+	}
+	Otel struct {
+		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`
 	}
 }
