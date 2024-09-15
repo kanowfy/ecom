@@ -1,8 +1,9 @@
 module github.com/kanowfy/ecom/email_service
 
-go 1.19
+go 1.22
 
 require (
+	github.com/caarlos0/env/v11 v11.2.2 // indirect
 	github.com/go-mail/mail/v2 v2.3.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect

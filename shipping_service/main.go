@@ -1,32 +1,55 @@
 package main
 
 import (
-	"github.com/kanowfy/ecom/shipping_service/pb"
-	"log"
+	"flag"
+	"fmt"
+	"log/slog"
 	"net"
+	"os"
 
+	"github.com/caarlos0/env/v11"
+	"github.com/kanowfy/ecom/shipping_service/internal/config"
+	"github.com/kanowfy/ecom/shipping_service/internal/log"
+	"github.com/kanowfy/ecom/shipping_service/internal/service"
+	"github.com/kanowfy/ecom/shipping_service/pb"
 	"google.golang.org/grpc"
 )
 
-var (
-	port = ":3004"
-)
-
-type server struct {
-	*pb.UnimplementedShippingServer
-}
-
 func main() {
-	srv := &server{}
-	lis, err := net.Listen("tcp", port)
+	var cfg config.Config
+
+	if err := env.Parse(&cfg); err != nil {
+		fmt.Printf("failed to parse environment variable: %v", err)
+		os.Exit(1)
+	}
+
+	flag.StringVar(&cfg.Host, "srv.host", cfg.Host, "server host")
+	flag.IntVar(&cfg.Port, "srv.port", cfg.Port, "server port")
+
+	var level = slog.LevelDebug
+
+	flag.Func("loglevel", "minimum log level", func(s string) error {
+		if err := level.UnmarshalText([]byte(s)); err != nil {
+			return err
+		}
+
+		return nil
+	})
+	flag.Parse()
+
+	logger := log.New(os.Stdout, level, true)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", cfg.Host, cfg.Port))
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("failed to announce address", "error", err.Error())
+		os.Exit(1)
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterShippingServer(s, srv)
-	log.Printf("gRPC server listening on port %s", port)
+	pb.RegisterShippingServer(s, service.New(logger))
+	logger.Info(fmt.Sprintf("gRPC server listening on %s:%d", cfg.Host, cfg.Port))
 	if err := s.Serve(lis); err != nil {
-		log.Fatal(err)
+		logger.Error("failed to serve", "error", err.Error())
+		os.Exit(1)
 	}
 }

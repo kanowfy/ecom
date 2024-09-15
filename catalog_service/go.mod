@@ -1,12 +1,14 @@
 module github.com/kanowfy/ecom/catalog_service
 
-go 1.19
+go 1.22
 
 require (
 	github.com/jackc/pgx/v5 v5.1.1
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
+
+require github.com/caarlos0/env/v11 v11.2.2 // indirect
 
 require (
 	github.com/gofrs/uuid v4.3.1+incompatible
