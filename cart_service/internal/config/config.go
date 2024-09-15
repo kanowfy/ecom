@@ -10,4 +10,7 @@ type Config struct {
 		Password string `env:"DB_PASSWORD"`
 		Index    int    `env:"DB_INDEX" envDefault:"0"`
 	}
+	Otel struct {
+		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`
+	}
 }
