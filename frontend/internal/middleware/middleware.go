@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"context"
@@ -8,7 +8,9 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-func checkSessionID(next http.Handler) http.HandlerFunc {
+type CtxSIDKey struct{}
+
+func CheckSessionID(next http.Handler, cookieSID string, cookieMaxAge int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var sessionID string
 		c, err := r.Cookie(cookieSID)
@@ -26,7 +28,7 @@ func checkSessionID(next http.Handler) http.HandlerFunc {
 			sessionID = c.Value
 		}
 
-		ctx := context.WithValue(r.Context(), ctxSIDKey{}, sessionID)
+		ctx := context.WithValue(r.Context(), CtxSIDKey{}, sessionID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	}

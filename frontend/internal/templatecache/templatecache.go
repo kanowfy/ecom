@@ -1,11 +1,14 @@
-package main
+package templatecache
 
 import (
 	"html/template"
 	"path/filepath"
+
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
-func newTemplateCache(dir string) (map[string]*template.Template, error) {
+func New(dir string) (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
 	pages, err := filepath.Glob(filepath.Join(dir, "*.page.html"))
@@ -37,4 +40,8 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	}
 
 	return cache, nil
+}
+
+func formattedPrice(price int64) string {
+	return message.NewPrinter(language.English).Sprint(price)
 }
