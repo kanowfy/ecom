@@ -12,4 +12,7 @@ type Config struct {
 		Password string `env:"MAIL_PASSWORD" envDefault:"b45ea57aabed01"`
 		Sender   string `env:"MAIL_SENDER" envDefault:"Ecom <no-reply@ecom.kanowfy.com>"`
 	}
+	Otel struct {
+		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`
+	}
 }

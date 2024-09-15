@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -13,6 +14,7 @@ import (
 	"github.com/kanowfy/ecom/email_service/internal/mailer"
 	"github.com/kanowfy/ecom/email_service/internal/service"
 	"github.com/kanowfy/ecom/email_service/pb"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"google.golang.org/grpc"
 )
@@ -32,6 +34,7 @@ func main() {
 	flag.StringVar(&cfg.Mail.Username, "mail.username", cfg.Mail.Username, "mail username")
 	flag.StringVar(&cfg.Mail.Password, "mail.password", cfg.Mail.Password, "mail password")
 	flag.StringVar(&cfg.Mail.Sender, "mail.sender", cfg.Mail.Sender, "mail sender")
+	flag.StringVar(&cfg.Otel.GrpcEndpoint, "otel.grpcendpoint", cfg.Otel.GrpcEndpoint, "grpc collector endpoint")
 
 	var level = slog.LevelDebug
 
@@ -46,6 +49,15 @@ func main() {
 	flag.Parse()
 
 	logger := log.New(os.Stdout, level, true)
+
+	ctx := context.Background()
+	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, "email-service")
+	if err != nil {
+		logger.Error("failed to initialize tracer", "error", err)
+		os.Exit(1)
+	}
+	defer tp.Shutdown(ctx)
+
 	mailer := mailer.New(cfg.Mail.Host, cfg.Mail.Port, cfg.Mail.Username, cfg.Mail.Password, cfg.Mail.Sender)
 	service := service.New(logger, mailer)
 
@@ -55,7 +67,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
 	pb.RegisterEmailServer(s, service)
 	logger.Info(fmt.Sprintf("gRPC server listening on %s:%d", cfg.Server.Host, cfg.Server.Port))
 	if err := s.Serve(lis); err != nil {
