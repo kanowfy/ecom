@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/kanowfy/ecom/frontend/internal/config"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,7 +25,11 @@ func dialService(ctx context.Context, conn **grpc.ClientConn, addr string) error
 	defer cancel()
 
 	var err error
-	*conn, err = grpc.DialContext(ctx, addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	*conn, err = grpc.NewClient(
+		addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to connect to grpc server with address %s: %w", addr, err)
 	}

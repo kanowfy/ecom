@@ -35,6 +35,7 @@ func main() {
 	flag.StringVar(&cfg.UpstreamAddr.Order, "addr.order", cfg.UpstreamAddr.Order, "order service address")
 	flag.StringVar(&cfg.Cookie.SID, "cookie.sid", cfg.Cookie.SID, "cookie session id")
 	flag.IntVar(&cfg.Cookie.MaxAge, "cookie.maxage", cfg.Cookie.MaxAge, "cookie max age")
+	flag.StringVar(&cfg.Otel.GrpcEndpoint, "otel.grpcendpoint", cfg.Otel.GrpcEndpoint, "grpc collector endpoint")
 
 	var level = slog.LevelDebug
 
@@ -48,12 +49,20 @@ func main() {
 
 	flag.Parse()
 
+	logger := log.New(os.Stdout, level, true)
+	ctx := context.Background()
+	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, "frontend")
+	if err != nil {
+		logger.Error("failed to initialize tracer", "error", err)
+		os.Exit(1)
+	}
+	defer tp.Shutdown(ctx)
+
 	conns := new(grpcconn.Connection)
 	if err := conns.Map(context.Background(), cfg.UpstreamAddr); err != nil {
 		fmt.Printf("failed to establish upstream connections: %v", err)
 		os.Exit(1)
 	}
-	logger := log.New(os.Stdout, level, true)
 
 	templateCache, err := templatecache.New("./ui/templates/")
 	if err != nil {
