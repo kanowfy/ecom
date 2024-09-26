@@ -19,6 +19,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const SvcName = "email-svc"
+
 func main() {
 	var cfg config.Config
 
@@ -51,12 +53,19 @@ func main() {
 	logger := log.New(os.Stdout, level, true)
 
 	ctx := context.Background()
-	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, "email-service")
+	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, SvcName)
 	if err != nil {
 		logger.Error("failed to initialize tracer", "error", err)
 		os.Exit(1)
 	}
 	defer tp.Shutdown(ctx)
+
+	mp, err := initMetrics(ctx, cfg.Otel.GrpcEndpoint, SvcName)
+	if err != nil {
+		logger.Error("failed to initialize tracer", "error", err)
+		os.Exit(1)
+	}
+	defer mp.Shutdown(ctx)
 
 	mailer := mailer.New(cfg.Mail.Host, cfg.Mail.Port, cfg.Mail.Username, cfg.Mail.Password, cfg.Mail.Sender)
 	service := service.New(logger, mailer)
