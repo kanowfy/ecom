@@ -17,6 +17,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const SvcName = "shipping-svc"
+
 func main() {
 	var cfg config.Config
 
@@ -42,12 +44,19 @@ func main() {
 
 	logger := log.New(os.Stdout, level, true)
 	ctx := context.Background()
-	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, "shipping service")
+	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, SvcName)
 	if err != nil {
 		logger.Error("failed to initialize tracer", "error", err)
 		os.Exit(1)
 	}
 	defer tp.Shutdown(ctx)
+
+	mp, err := initMetrics(ctx, cfg.Otel.GrpcEndpoint, SvcName)
+	if err != nil {
+		logger.Error("failed to initialize tracer", "error", err)
+		os.Exit(1)
+	}
+	defer mp.Shutdown(ctx)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port))
 	if err != nil {
