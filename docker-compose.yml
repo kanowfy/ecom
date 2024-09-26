@@ -9,12 +9,22 @@ services:
     healthcheck:
       test: [CMD, wget, -q, -S, -O, "-", "localhost:14269"]
 
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+    volumes:
+      - ./prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - 9090:9090
+
   collector:
     image: otel/opentelemetry-collector:0.107.0
     volumes:
       - ./otel-collector.yaml:/etc/otelcol/config.yaml
     ports:
-      - 4317
+      - 4317 # otlp over grpc exporter
+      - 9464 # prometheus exporter
     depends_on:
       jaeger:
         condition: service_healthy
