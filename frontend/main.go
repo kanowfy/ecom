@@ -17,6 +17,8 @@ import (
 	"github.com/kanowfy/ecom/frontend/internal/templatecache"
 )
 
+const SvcName = "frontend"
+
 func main() {
 	var cfg config.Config
 
@@ -51,12 +53,19 @@ func main() {
 
 	logger := log.New(os.Stdout, level, true)
 	ctx := context.Background()
-	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, "frontend")
+	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, SvcName)
 	if err != nil {
 		logger.Error("failed to initialize tracer", "error", err)
 		os.Exit(1)
 	}
 	defer tp.Shutdown(ctx)
+
+	mp, err := initMetrics(ctx, cfg.Otel.GrpcEndpoint, SvcName)
+	if err != nil {
+		logger.Error("failed to initialize tracer", "error", err)
+		os.Exit(1)
+	}
+	defer mp.Shutdown(ctx)
 
 	conns := new(grpcconn.Connection)
 	if err := conns.Map(context.Background(), cfg.UpstreamAddr); err != nil {
