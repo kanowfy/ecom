@@ -19,6 +19,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const SvcName = "catalog-svc"
+
 func main() {
 	var cfg config.Config
 
@@ -47,12 +49,19 @@ func main() {
 	logger := log.New(os.Stdout, level, true)
 
 	ctx := context.Background()
-	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, "catalog-service")
+	tp, err := initTracer(ctx, cfg.Otel.GrpcEndpoint, SvcName)
 	if err != nil {
-		logger.Error("failed to initialize tracer", "error", err)
+		logger.Error("failed to initialize tracer provider", "error", err)
 		os.Exit(1)
 	}
 	defer tp.Shutdown(ctx)
+
+	mp, err := initMetrics(ctx, cfg.Otel.GrpcEndpoint, SvcName)
+	if err != nil {
+		logger.Error("failed to initialize meter provider", "error", err)
+		os.Exit(1)
+	}
+	defer mp.Shutdown(ctx)
 
 	pool, err := pgxpool.New(ctx, cfg.DB.Url)
 	if err != nil {
