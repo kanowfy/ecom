@@ -7,9 +7,14 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kanowfy/ecom/order_service/internal/grpcconn"
 	"github.com/kanowfy/ecom/order_service/pb"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+const tracerName = "github.com/kanowfy/ecom/order_service/service"
+
+var tracer = otel.Tracer(tracerName)
 
 type service struct {
 	logger *slog.Logger
@@ -25,6 +30,9 @@ func New(logger *slog.Logger, conns *grpcconn.Connection) *service {
 }
 
 func (s *service) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
+	ctx, span := tracer.Start(ctx, "place_order")
+	defer span.End()
+
 	s.logger.Info("received a PlaceOrder request")
 	// prepare order id
 	id, err := uuid.NewV4()
