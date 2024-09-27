@@ -8,9 +8,15 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kanowfy/ecom/catalog_service/internal/repository"
 	"github.com/kanowfy/ecom/catalog_service/pb"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+const tracerName = "github.com/kanowfy/ecom/catalog_service/service"
+
+var tracer = otel.Tracer(tracerName)
 
 type service struct {
 	logger *slog.Logger
@@ -26,7 +32,13 @@ func New(logger *slog.Logger, repo repository.Repository) *service {
 }
 
 func (s *service) GetProductById(ctx context.Context, req *pb.GetProductByIdRequest) (*pb.GetProductByIdResponse, error) {
+	ctx, span := tracer.Start(ctx, "get_product_by_id")
+	defer span.End()
+
 	id := req.GetId()
+
+	span.SetAttributes(attribute.String("product_id", id))
+
 	_, err := uuid.FromString(id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid id: %v", err)
@@ -43,7 +55,7 @@ func (s *service) GetProductById(ctx context.Context, req *pb.GetProductByIdRequ
 			return nil, status.Error(codes.NotFound, "no product with matching id found")
 		default:
 			logger.Error("failed to fetch product", "error", err.Error())
-			return nil, status.Errorf(codes.Internal, "failed to fetch product", err)
+			return nil, status.Errorf(codes.Internal, "failed to fetch product %v", err)
 		}
 	}
 
@@ -63,10 +75,13 @@ func (s *service) GetProductById(ctx context.Context, req *pb.GetProductByIdRequ
 }
 
 func (s *service) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*pb.AddProductResponse, error) {
+	ctx, span := tracer.Start(ctx, "add_product")
+	defer span.End()
+
 	s.logger.Info("received an AddProduct request")
 	id, err := uuid.NewV4()
 	if err != nil {
-		s.logger.Error("failed to generate uuid: %v", err)
+		s.logger.Error("failed to generate uuid: %v", "error", err)
 		return nil, status.Errorf(codes.Internal, "failed to generate uuid: %v", err)
 	}
 
@@ -80,7 +95,7 @@ func (s *service) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*p
 	}
 
 	if err = s.repo.Add(ctx, product); err != nil {
-		s.logger.Error("can not add product: %v", err)
+		s.logger.Error("can not add product: %v", "error", err)
 		return nil, status.Errorf(codes.Internal, "failed to add product: %v", err)
 	}
 
@@ -93,6 +108,9 @@ func (s *service) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*p
 	return resp, nil
 }
 func (s *service) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
+	ctx, span := tracer.Start(ctx, "search_products")
+	defer span.End()
+
 	s.logger.Info("received a SearchProducts request")
 	products, err := s.repo.List(ctx, req.GetQuery())
 	if err != nil {
