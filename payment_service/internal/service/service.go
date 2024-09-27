@@ -7,9 +7,14 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kanowfy/ecom/payment_service/internal/validator"
 	"github.com/kanowfy/ecom/payment_service/pb"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+const tracerName = "github.com/kanowfy/ecom/payment_service/service"
+
+var tracer = otel.Tracer(tracerName)
 
 type service struct {
 	logger *slog.Logger
@@ -23,6 +28,9 @@ func New(logger *slog.Logger) *service {
 }
 
 func (s *service) Charge(ctx context.Context, req *pb.ChargeRequest) (*pb.ChargeResponse, error) {
+	ctx, span := tracer.Start(ctx, "charge")
+	defer span.End()
+
 	s.logger.Info("received a Charge request")
 
 	err := validator.VerifyCard(req.GetCreditCard().CardNumber, req.GetCreditCard().CardCvv, req.GetCreditCard().CardExpirationYear, req.GetCreditCard().CardExpirationMonth)
