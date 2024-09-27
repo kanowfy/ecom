@@ -6,7 +6,12 @@ import (
 
 	"github.com/kanowfy/ecom/email_service/internal/mailer"
 	"github.com/kanowfy/ecom/email_service/pb"
+	"go.opentelemetry.io/otel"
 )
+
+const tracerName = "github.com/kanowfy/ecom/email_service/service"
+
+var tracer = otel.Tracer(tracerName)
 
 type orderItem struct {
 	Item struct {
@@ -30,6 +35,9 @@ func New(logger *slog.Logger, mailer mailer.Mailer) *service {
 }
 
 func (s *service) SendConfirmation(ctx context.Context, req *pb.SendConfirmationRequest) (*pb.None, error) {
+	ctx, span := tracer.Start(ctx, "send_confirmation_email")
+	defer span.End()
+
 	s.logger.Info("received a SendConfirmation request")
 
 	var items []*orderItem
