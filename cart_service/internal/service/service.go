@@ -9,9 +9,14 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kanowfy/ecom/cart_service/internal/repository"
 	"github.com/kanowfy/ecom/cart_service/pb"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+const tracerName = "github.com/kanowfy/ecom/cart_service/service"
+
+var tracer = otel.Tracer(tracerName)
 
 type service struct {
 	logger *slog.Logger
@@ -27,6 +32,9 @@ func New(logger *slog.Logger, repo repository.Repository) *service {
 }
 
 func (s *service) GetCart(ctx context.Context, req *pb.GetCartRequest) (*pb.GetCartResponse, error) {
+	ctx, span := tracer.Start(ctx, "get_cart")
+	defer span.End()
+
 	id := req.GetUserId()
 	if err := validateUUID(id); err != nil {
 		return nil, fmt.Errorf("failed to validate user id: %w", err)
@@ -68,6 +76,9 @@ func (s *service) GetCart(ctx context.Context, req *pb.GetCartRequest) (*pb.GetC
 }
 
 func (s *service) AddItem(ctx context.Context, req *pb.AddItemRequest) (*pb.None, error) {
+	ctx, span := tracer.Start(ctx, "add_item")
+	defer span.End()
+
 	id := req.GetUserId()
 	logger := s.logger.With(slog.String("user_id", id), slog.String("product_id", req.Item.GetProductId()), slog.Uint64("quantity", uint64(req.Item.GetQuantity())))
 
@@ -97,6 +108,9 @@ func (s *service) AddItem(ctx context.Context, req *pb.AddItemRequest) (*pb.None
 }
 
 func (s *service) RemoveItem(ctx context.Context, req *pb.RemoveItemRequest) (*pb.None, error) {
+	ctx, span := tracer.Start(ctx, "remove_item")
+	defer span.End()
+
 	id := req.GetUserId()
 	logger := s.logger.With(slog.String("user_id", id), slog.String("product_id", req.GetProductId()))
 	if err := validateUUID(id, req.GetProductId()); err != nil {
