@@ -6,7 +6,7 @@ type Config struct {
 		Port int    `env:"SERVER_PORT" envDefault:"3001"`
 	}
 	DB struct {
-		Url string `env:"DB_URL"`
+		Url string `env:"POSTGRES_URL"`
 	}
 	Otel struct {
 		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`

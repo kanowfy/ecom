@@ -6,9 +6,9 @@ type Config struct {
 		Port int    `env:"SERVER_PORT" envDefault:"3002"`
 	}
 	DB struct {
-		Addr     string `env:"DB_URL"`
-		Password string `env:"DB_PASSWORD"`
-		Index    int    `env:"DB_INDEX" envDefault:"0"`
+		Addr     string `env:"REDIS_URL"`
+		Password string `env:"REDIS_PASSWORD"`
+		Index    int    `env:"REDIS_DB_INDEX" envDefault:"0"`
 	}
 	Otel struct {
 		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`
