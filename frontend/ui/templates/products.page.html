@@ -1,18 +1,39 @@
-{{template "base" .}}
-
-{{define "body"}}
-<h2 class="text-center">Hot Products</h2>
-<ul class="row mx-5 mt-4 h-100 d-flex align-items-center justify-content-center">
-    {{range .}}
-    <div class="card col-md-3 m-3" style="width: 20rem;">
-        <a href="/products/{{.Id}}">
-            <img src="{{.Image}}" class="card-img-top" height=300px alt="{{.Name}}">
-        </a>
-        <div class="card-body">
-            <h5 class="text-base text-muted font-semibold">{{.Name}}</h5>
-            <span class="d-block h5"><span>&#8363;</span>{{formattedPrice .PriceVnd}}</span>
-        </div>
+{{template "base" .}} {{define "body"}}
+<form
+  action="/products"
+  method="POST"
+  class="mb-3 mb-lg-0 me-lg-3 mx-5"
+  role="search"
+>
+  <input
+    name="query"
+    type="search"
+    class="form-control"
+    style="font-size: 1.4rem"
+    placeholder="Search for products..."
+    aria-label="Search"
+  />
+</form>
+<ul
+  class="row mx-5 mt-4 h-100 d-flex align-items-center justify-content-center"
+>
+  {{range .}}
+  <div class="card col-md-3 m-3" style="width: 20rem">
+    <a href="/products/{{.Id}}">
+      <img
+        src="{{.Image}}"
+        class="card-img-top"
+        height="300px"
+        alt="{{.Name}}"
+      />
+    </a>
+    <div class="card-body">
+      <h5 class="text-base text-muted font-semibold">{{.Name}}</h5>
+      <span class="d-block h5"
+        ><span>&#8363;</span>{{formattedPrice .PriceVnd}}</span
+      >
     </div>
-    {{end}}
+  </div>
+  {{end}}
 </ul>
 {{end}}

@@ -13,8 +13,7 @@
 
 ## About The Project
 
-
-The application consists of 8 Go services communicate through <b>gRPC</b>:
+The application consists of 7 services communicate through <b>gRPC</b>:
 <br/>
 
 - <b>Catalog Service</b>: Handle management of products, uses Postgresql to persist data
