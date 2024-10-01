@@ -7,7 +7,12 @@ import (
 	"math/rand"
 
 	"github.com/kanowfy/ecom/shipping_service/pb"
+	"go.opentelemetry.io/otel"
 )
+
+const tracerName = "github.com/kanowfy/ecom/shipping_service/service"
+
+var tracer = otel.Tracer(tracerName)
 
 type service struct {
 	logger *slog.Logger
@@ -21,6 +26,9 @@ func New(logger *slog.Logger) *service {
 }
 
 func (s *service) GetShippingCost(ctx context.Context, req *pb.GetShippingCostRequest) (*pb.GetShippingCostResponse, error) {
+	ctx, span := tracer.Start(ctx, "get_shipping_cost")
+	defer span.End()
+
 	s.logger.Info("received a GetShippingCost request")
 	defer s.logger.Info("GetShippingCost successful")
 	return &pb.GetShippingCostResponse{
@@ -29,6 +37,9 @@ func (s *service) GetShippingCost(ctx context.Context, req *pb.GetShippingCostRe
 }
 
 func (s *service) ShipOrder(ctx context.Context, req *pb.ShipOrderRequest) (*pb.ShipOrderResponse, error) {
+	ctx, span := tracer.Start(ctx, "ship_order")
+	defer span.End()
+
 	s.logger.Info("received a ShipOrder request")
 	defer s.logger.Info("ShipOrder created successfully")
 

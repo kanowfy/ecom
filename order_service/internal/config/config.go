@@ -14,4 +14,7 @@ type Config struct {
 		Port int    `env:"SERVER_PORT" envDefault:"3006"`
 	}
 	UpstreamAddr UpstreamAddr
+	Otel         struct {
+		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`
+	}
 }

@@ -19,4 +19,7 @@ type Config struct {
 		MaxAge int    `env:"COOKIE_MAXAGE" envDefault:"86400"`
 	}
 	UpstreamAddr UpstreamAddr
+	Otel         struct {
+		GrpcEndpoint string `env:"OTLP_GRPC_ENDPOINT"`
+	}
 }

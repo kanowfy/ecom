@@ -78,7 +78,7 @@ func (h *Handlers) getShipCost(ctx context.Context, items []*pb.CartItem) (int64
 }
 
 func (h *Handlers) emptyCart(ctx context.Context, userid string) error {
-	cartItems, err := h.getCart(context.Background(), userid)
+	cartItems, err := h.getCart(ctx, userid)
 	if err != nil {
 		return fmt.Errorf("could not get cart: %v", err)
 	}

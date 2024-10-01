@@ -10,8 +10,8 @@ import (
 
 type CtxSIDKey struct{}
 
-func CheckSessionID(next http.Handler, cookieSID string, cookieMaxAge int) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func CheckSessionID(next http.Handler, cookieSID string, cookieMaxAge int) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var sessionID string
 		c, err := r.Cookie(cookieSID)
 		if errors.Is(err, http.ErrNoCookie) {
@@ -31,5 +31,5 @@ func CheckSessionID(next http.Handler, cookieSID string, cookieMaxAge int) http.
 		ctx := context.WithValue(r.Context(), CtxSIDKey{}, sessionID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
-	}
+	})
 }
