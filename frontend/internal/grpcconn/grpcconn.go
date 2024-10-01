@@ -1,0 +1,77 @@
+package grpcconn
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/kanowfy/ecom/frontend/internal/config"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+type Connection struct {
+	CatalogSvc  *grpc.ClientConn
+	CartSvc     *grpc.ClientConn
+	ShippingSvc *grpc.ClientConn
+	EmailSvc    *grpc.ClientConn
+	PaymentSvc  *grpc.ClientConn
+	OrderSvc    *grpc.ClientConn
+}
+
+func dialService(ctx context.Context, conn **grpc.ClientConn, addr string) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
+	defer cancel()
+
+	var err error
+	*conn, err = grpc.NewClient(
+		addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to connect to grpc server with address %s: %w", addr, err)
+	}
+
+	return nil
+}
+
+func (c *Connection) Map(ctx context.Context, addrs config.UpstreamAddr) error {
+	pairs := []struct {
+		conn **grpc.ClientConn
+		addr string
+	}{
+		{
+			conn: &c.CatalogSvc,
+			addr: addrs.Catalog,
+		},
+		{
+			conn: &c.CartSvc,
+			addr: addrs.Cart,
+		},
+		{
+			conn: &c.ShippingSvc,
+			addr: addrs.Shipping,
+		},
+		{
+			conn: &c.EmailSvc,
+			addr: addrs.Email,
+		},
+		{
+			conn: &c.PaymentSvc,
+			addr: addrs.Payment,
+		},
+		{
+			conn: &c.OrderSvc,
+			addr: addrs.Order,
+		},
+	}
+
+	for _, pair := range pairs {
+		if err := dialService(ctx, pair.conn, pair.addr); err != nil {
+			return fmt.Errorf("failed to map connection: %w", err)
+		}
+	}
+	return nil
+}

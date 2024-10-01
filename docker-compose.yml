@@ -1,89 +1,139 @@
-version: "3.9"
 services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      JAEGER_PROPAGATION: w3c
+    ports:
+      - ${JAEGER_SVC_PORT}:${JAEGER_SVC_PORT}
+      - ${JAEGER_COLLECTOR_PORT}
+    healthcheck:
+      test: [CMD, wget, -q, -S, -O, "-", "localhost:14269"]
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+    volumes:
+      - ${PROMETHEUS_CONFIG_FILE}:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - ${PROMETHEUS_SVC_PORT}:${PROMETHEUS_SVC_PORT}
+
+  collector:
+    image: otel/opentelemetry-collector:0.107.0
+    volumes:
+      - ${OTEL_CONFIG_FILE}:/etc/otelcol/config.yaml
+    ports:
+      - ${OTLP_GRPC_PORT} # otlp over grpc exporter
+      - ${PROMETHEUS_EXPORTER_PORT} # prometheus exporter
+    depends_on:
+      jaeger:
+        condition: service_healthy
+
   postgres:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=psswrd
-      - POSTGRES_DB=catalog
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
   catalog_svc:
     build:
       context: ./catalog_service
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
+      - ${CATALOG_SVC_PORT}:${CATALOG_SVC_PORT}
     environment:
-      - DB_URL=postgres://root:psswrd@postgres:5432/catalog?sslmode=disable
-    depends_on:
-      - postgres
+      POSTGRES_URL: ${POSTGRES_URL}
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
     entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
     command: [ "/app/server" ]
+    depends_on:
+      - postgres
+
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT}:${REDIS_PORT}
     entrypoint: redis-server --appendonly yes
+
   cart_svc:
     build:
       context: ./cart_service
       dockerfile: Dockerfile
     ports:
-      - "3002:3002"
+      - ${CART_SVC_PORT}:${CART_SVC_PORT}
     environment:
-      - RD_URL=redis:6379
+      REDIS_URL: ${REDIS_URL}
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
     depends_on:
       - redis
+
   payment_svc:
     build:
       context: ./payment_service
       dockerfile: Dockerfile
     ports:
-      - "3003:3003"
-    depends_on:
-      - cart_svc
+      - ${PAYMENT_SVC_PORT}:${PAYMENT_SVC_PORT}
+    environment:
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
+
   shipping_svc:
     build:
       context: ./shipping_service
       dockerfile: Dockerfile
     ports:
-      - "3004:3004"
-    depends_on:
-      - payment_svc
+      - ${SHIPPING_SVC_PORT}:${SHIPPING_SVC_PORT}
+    environment:
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
+
   email_svc:
     build:
       context: ./email_service
       dockerfile: Dockerfile
     ports:
-      - "3005:3005"
-    depends_on:
-      - shipping_svc
+      - ${EMAIL_SVC_PORT}:${EMAIL_SVC_PORT}
+    environment:
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
+
   order_svc:
     build:
       context: ./order_service
       dockerfile: Dockerfile
     environment:
-      - CATALOG_SVC_ADDR=catalog_svc:3001
-      - CART_SVC_ADDR=cart_svc:3002
-      - PAYMENT_SVC_ADDR=payment_svc:3003
-      - SHIPPING_SVC_ADDR=shipping_svc:3004
-      - EMAIL_SVC_ADDR=email_svc:3005
+      CATALOG_SVC_ADDR: ${CATALOG_SVC_ADDR}
+      CART_SVC_ADDR: ${CART_SVC_ADDR}
+      PAYMENT_SVC_ADDR: ${PAYMENT_SVC_ADDR}
+      SHIPPING_SVC_ADDR: ${SHIPPING_SVC_ADDR}
+      EMAIL_SVC_ADDR: ${EMAIL_SVC_ADDR}
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
     ports:
-      - "3006:3006"
+      - ${ORDER_SVC_PORT}:${ORDER_SVC_PORT}
     depends_on:
+      - catalog_svc
+      - cart_svc
+      - payment_svc
+      - shipping_svc
       - email_svc
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - CATALOG_SVC_ADDR=catalog_svc:3001
-      - CART_SVC_ADDR=cart_svc:3002
-      - PAYMENT_SVC_ADDR=payment_svc:3003
-      - SHIPPING_SVC_ADDR=shipping_svc:3004
-      - EMAIL_SVC_ADDR=email_svc:3005
-      - ORDER_SVC_ADDR=order_svc:3006
+      CATALOG_SVC_ADDR: ${CATALOG_SVC_ADDR}
+      CART_SVC_ADDR: ${CART_SVC_ADDR}
+      PAYMENT_SVC_ADDR: ${PAYMENT_SVC_ADDR}
+      SHIPPING_SVC_ADDR: ${SHIPPING_SVC_ADDR}
+      EMAIL_SVC_ADDR: ${EMAIL_SVC_ADDR}
+      ORDER_SVC_ADDR: ${ORDER_SVC_ADDR}
+      OTLP_GRPC_ENDPOINT: ${OTLP_GRPC_ENDPOINT}
     ports:
-      - "4000:4000"
+      - ${FRONTEND_SVC_PORT}:${FRONTEND_SVC_PORT}
     depends_on:
+      - catalog_svc
+      - cart_svc
+      - payment_svc
+      - shipping_svc
+      - email_svc
       - order_svc
 
