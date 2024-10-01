@@ -13,9 +13,8 @@
 
 ## About The Project
 
-<img src="https://raw.githubusercontent.com/kanowfy/ecom/dev/img/1.png">
 
-8 Go services communicate through <b>gRPC</b>:
+The application consists of 8 Go services communicate through <b>gRPC</b>:
 <br/>
 
 - <b>Catalog Service</b>: Handle management of products, uses Postgresql to persist data
@@ -28,7 +27,7 @@
 
 ### Prerequisites
 
-- Docker with Docker-Compose installed
+- Docker with `docker-compose` installed
 
 ### Installation
 
@@ -38,15 +37,23 @@
    ```
 2. Run docker-compose
    ```sh
-   docker compose up
+   docker compose --env-file .env.example up
    ```
-3. Visit `localhost:4000`
+3. Visit 
+- `localhost:4000` for the main site
+- `localhost:16686` for viewing traces through Jaeger UI
+- `localhost:9090` for viewing metrics through Prometheus
+
+### Screenshots
+
+<img src="https://raw.githubusercontent.com/kanowfy/ecom/dev/img/1.png">
+<img src="https://raw.githubusercontent.com/kanowfy/ecom/dev/img/jaeger.png"
 
 <!-- CONTACT -->
 
 ## Contact
 
-[@kanowfy](https://twitter.com/kanowfy) - nguyendung2002hl@gmail.com
+nguyendung2002hl@gmail.com
 
 <!-- ACKNOWLEDGMENTS -->
 
